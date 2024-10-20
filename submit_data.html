@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThingSpeak Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      color: #333;
+    }
+    .data {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>ThingSpeak Data</h1>
+  <div class="data">Data 1: <span id="data1">Loading...</span></div>
+  <div class="data">Data 2: <span id="data2">Loading...</span></div>
+  <div class="data">Data 3: <span id="data3">Loading...</span></div>
+  <div class="data">Data 4: <span id="data4">Loading...</span></div>
+
+  <script>
+    const apiKey = '9UGUOF5FEEBRJ5UP'; // Read API Key
+    const channelID = '2704730'; // Channel ID
+
+    function fetchData() {
+      const url = `https://api.thingspeak.com/channels/${channelID}/fields/1.json?api_key=${apiKey}&results=1`;
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Get the last entry from the ThingSpeak feed
+          const lastEntry = data.feeds[0];
+          document.getElementById('data1').textContent = lastEntry.field1;
+        })
+        .catch(err => console.error('Error fetching data1:', err));
+
+      const url2 = `https://api.thingspeak.com/channels/${channelID}/fields/2.json?api_key=${apiKey}&results=1`;
+      
+      fetch(url2)
+        .then(response => response.json())
+        .then(data => {
+          const lastEntry = data.feeds[0];
+          document.getElementById('data2').textContent = lastEntry.field2;
+        })
+        .catch(err => console.error('Error fetching data2:', err));
+
+      const url3 = `https://api.thingspeak.com/channels/${channelID}/fields/3.json?api_key=${apiKey}&results=1`;
+      
+      fetch(url3)
+        .then(response => response.json())
+        .then(data => {
+          const lastEntry = data.feeds[0];
+          document.getElementById('data3').textContent = lastEntry.field3;
+        })
+        .catch(err => console.error('Error fetching data3:', err));
+
+      const url4 = `https://api.thingspeak.com/channels/${channelID}/fields/4.json?api_key=${apiKey}&results=1`;
+      
+      fetch(url4)
+        .then(response => response.json())
+        .then(data => {
+          const lastEntry = data.feeds[0];
+          document.getElementById('data4').textContent = lastEntry.field4;
+        })
+        .catch(err => console.error('Error fetching data4:', err));
+    }
+
+    // Fetch data initially
+    fetchData();
+
+    // Optionally, refresh data every 15 seconds (ThingSpeak's rate limit)
+    setInterval(fetchData, 15000);
+  </script>
+</body>
+</html>
