@@ -3,73 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ThingSpeak Data</title>
+  <title>Parking and Dustbin Status</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
-      padding: 50px;
-      background-color: red;
-    }
-    h1 {
+      padding: 30px;
+      background-color: #e0f7fa;
       color: #333;
     }
+    h1 {
+      color: #00796b;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    h2.section-title {
+      color: #004d40;
+      font-size: 2em;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    .section {
+      margin-bottom: 50px;
+    }
+    .status-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .status-box {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 15px;
+      padding: 20px;
+      width: 250px;
+      transition: transform 0.3s ease;
+    }
+    .status-box:hover {
+      transform: translateY(-10px);
+    }
+    .status-box h3 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: #00796b;
+    }
     .data {
-      font-size: 24px;
-      margin: 10px 0;
+      font-size: 1.25em;
+      color: #555;
+    }
+    footer {
+      margin-top: 50px;
+      font-size: 0.9em;
+      color: #777;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .status-box {
+        width: 80%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>ThingSpeak Data</h1>
-  <div class="data">Data 1: <span id="data1">Loading...</span></div>
-  <div class="data">Data 2: <span id="data2">Loading...</span></div>
-  <div class="data">Data 3: <span id="data3">Loading...</span></div>
-  <div class="data">Data 4: <span id="data4">Loading...</span></div>
+  <h1>Parking and Dustbin Status</h1>
+
+  <!-- Parking Section -->
+  <div class="section">
+    <h2 class="section-title">Parking Slots</h2>
+    <div class="status-container">
+      <div class="status-box">
+        <h3>Parking Slot 1</h3>
+        <div class="data" id="data1">Loading...</div>
+      </div>
+      <div class="status-box">
+        <h3>Parking Slot 2</h3>
+        <div class="data" id="data2">Loading...</div>
+      </div>
+      <div class="status-box">
+        <h3>Parking Slot 3</h3>
+        <div class="data" id="data3">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dustbin Section -->
+  <div class="section">
+    <h2 class="section-title">Dustbin Status</h2>
+    <div class="status-container">
+      <div class="status-box">
+        <h3>Dustbin</h3>
+        <div class="data" id="data4">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Powered by ThingSpeak | Data refreshed every 15 seconds
+  </footer>
 
   <script>
     const apiKey = '9UGUOF5FEEBRJ5UP'; // Read API Key
     const channelID = '2704730'; // Channel ID
 
     function fetchData() {
-      const url = `https://api.thingspeak.com/channels/${channelID}/fields/1.json?api_key=${apiKey}&results=1`;
-      
-      fetch(url)
+      const url1 = `https://api.thingspeak.com/channels/${channelID}/fields/1.json?api_key=${apiKey}&results=1`;
+      fetch(url1)
         .then(response => response.json())
         .then(data => {
-          // Get the last entry from the ThingSpeak feed
-          const lastEntry = data.feeds[0];
-          document.getElementById('data1').textContent = lastEntry.field1;
+          document.getElementById('data1').textContent = data.feeds[0].field1 || 'No Data';
         })
         .catch(err => console.error('Error fetching data1:', err));
 
       const url2 = `https://api.thingspeak.com/channels/${channelID}/fields/2.json?api_key=${apiKey}&results=1`;
-      
       fetch(url2)
         .then(response => response.json())
         .then(data => {
-          const lastEntry = data.feeds[0];
-          document.getElementById('data2').textContent = lastEntry.field2;
+          document.getElementById('data2').textContent = data.feeds[0].field2 || 'No Data';
         })
         .catch(err => console.error('Error fetching data2:', err));
 
       const url3 = `https://api.thingspeak.com/channels/${channelID}/fields/3.json?api_key=${apiKey}&results=1`;
-      
       fetch(url3)
         .then(response => response.json())
         .then(data => {
-          const lastEntry = data.feeds[0];
-          document.getElementById('data3').textContent = lastEntry.field3;
+          document.getElementById('data3').textContent = data.feeds[0].field3 || 'No Data';
         })
         .catch(err => console.error('Error fetching data3:', err));
 
       const url4 = `https://api.thingspeak.com/channels/${channelID}/fields/4.json?api_key=${apiKey}&results=1`;
-      
       fetch(url4)
         .then(response => response.json())
         .then(data => {
-          const lastEntry = data.feeds[0];
-          document.getElementById('data4').textContent = lastEntry.field4;
+          document.getElementById('data4').textContent = data.feeds[0].field4 || 'No Data';
         })
         .catch(err => console.error('Error fetching data4:', err));
     }
@@ -77,7 +144,7 @@
     // Fetch data initially
     fetchData();
 
-    // Optionally, refresh data every 15 seconds (ThingSpeak's rate limit)
+    // Refresh data every 15 seconds
     setInterval(fetchData, 15000);
   </script>
 </body>
