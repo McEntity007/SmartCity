@@ -38,7 +38,10 @@
       margin: 15px;
       padding: 20px;
       width: 250px;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .status-box.occupied {
+      background-color: #da5b4a;
     }
     .status-box:hover {
       transform: translateY(-10px);
@@ -73,15 +76,15 @@
   <div class="section">
     <h2 class="section-title">Parking Slots</h2>
     <div class="status-container">
-      <div class="status-box">
+      <div class="status-box" id="box1">
         <h3>Parking Slot 1</h3>
         <div class="data" id="data1">Loading...</div>
       </div>
-      <div class="status-box">
+      <div class="status-box" id="box2">
         <h3>Parking Slot 2</h3>
         <div class="data" id="data2">Loading...</div>
       </div>
-      <div class="status-box">
+      <div class="status-box" id="box3">
         <h3>Parking Slot 3</h3>
         <div class="data" id="data3">Loading...</div>
       </div>
@@ -92,7 +95,7 @@
   <div class="section">
     <h2 class="section-title">Dustbin Status</h2>
     <div class="status-container">
-      <div class="status-box">
+      <div class="status-box" id="box4">
         <h3>Dustbin</h3>
         <div class="data" id="data4">Loading...</div>
       </div>
@@ -107,36 +110,59 @@
     const apiKey = '9UGUOF5FEEBRJ5UP'; // Read API Key
     const channelID = '2704730'; // Channel ID
 
+    function updateBox(id, value, occupiedText, availableText) {
+      const box = document.getElementById(`box${id}`);
+      const dataElement = document.getElementById(`data${id}`);
+
+      if (value === '1') {
+        dataElement.textContent = occupiedText;
+        box.classList.add('occupied');
+      } else if (value === '0') {
+        dataElement.textContent = availableText;
+        box.classList.remove('occupied');
+      } else {
+        dataElement.textContent = 'No Data';
+      }
+    }
+
     function fetchData() {
+      // Parking Slot 1
       const url1 = `https://api.thingspeak.com/channels/${channelID}/fields/1.json?api_key=${apiKey}&results=1`;
       fetch(url1)
         .then(response => response.json())
         .then(data => {
-          document.getElementById('data1').textContent = data.feeds[0].field1 || 'No Data';
+          const value = data.feeds[0].field1 || 'No Data';
+          updateBox(1, value, 'Occupied', 'Available');
         })
         .catch(err => console.error('Error fetching data1:', err));
 
+      // Parking Slot 2
       const url2 = `https://api.thingspeak.com/channels/${channelID}/fields/2.json?api_key=${apiKey}&results=1`;
       fetch(url2)
         .then(response => response.json())
         .then(data => {
-          document.getElementById('data2').textContent = data.feeds[0].field2 || 'No Data';
+          const value = data.feeds[0].field2 || 'No Data';
+          updateBox(2, value, 'Occupied', 'Available');
         })
         .catch(err => console.error('Error fetching data2:', err));
 
+      // Parking Slot 3
       const url3 = `https://api.thingspeak.com/channels/${channelID}/fields/3.json?api_key=${apiKey}&results=1`;
       fetch(url3)
         .then(response => response.json())
         .then(data => {
-          document.getElementById('data3').textContent = data.feeds[0].field3 || 'No Data';
+          const value = data.feeds[0].field3 || 'No Data';
+          updateBox(3, value, 'Occupied', 'Available');
         })
         .catch(err => console.error('Error fetching data3:', err));
 
+      // Dustbin Status
       const url4 = `https://api.thingspeak.com/channels/${channelID}/fields/4.json?api_key=${apiKey}&results=1`;
       fetch(url4)
         .then(response => response.json())
         .then(data => {
-          document.getElementById('data4').textContent = data.feeds[0].field4 || 'No Data';
+          const value = data.feeds[0].field4 || 'No Data';
+          updateBox(4, value, 'Full', 'Empty');
         })
         .catch(err => console.error('Error fetching data4:', err));
     }
